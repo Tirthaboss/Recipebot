@@ -1,2 +1,4 @@
-request
-python-telegram-bot
+#request
+#python-telegram-bot
+streamlit 
+pandas
