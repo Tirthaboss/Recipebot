@@ -1,4 +1,4 @@
-import requests
+"""import requests
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 TOKEN = '7582415476:AAEiZfK7ajFzmf30VDh0UB87rbXugqeRJEo'
@@ -70,3 +70,76 @@ def main():
 
 if __name__ == '__main__':
     main()
+"""
+import streamlit as st
+import pandas as pd
+
+# Sample recipe database
+recipes = [
+    {
+        "name": "Vegetable Stir Fry",
+        "ingredients": ["broccoli", "carrot", "bell pepper", "soy sauce"],
+        "dietary_restrictions": ["vegan", "gluten-free"],
+        "cuisine": "Asian"
+    },
+    {
+        "name": "Chicken Salad",
+        "ingredients": ["chicken", "lettuce", "tomato", "olive oil"],
+        "dietary_restrictions": ["gluten-free"],
+        "cuisine": "Mediterranean"
+    },
+    {
+        "name": "Pasta Primavera",
+        "ingredients": ["pasta", "zucchini", "bell pepper", "olive oil"],
+        "dietary_restrictions": ["vegetarian"],
+        "cuisine": "Italian"
+    },
+    {
+        "name": "Quinoa Bowl",
+        "ingredients": ["quinoa", "black beans", "corn", "avocado"],
+        "dietary_restrictions": ["vegan", "gluten-free"],
+        "cuisine": "Mexican"
+    },
+    {
+        "name": "Beef Tacos",
+        "ingredients": ["beef", "taco shells", "lettuce", "cheese"],
+        "dietary_restrictions": [],
+        "cuisine": "Mexican"
+    }
+]
+
+# Convert to DataFrame for easier manipulation
+recipes_df = pd.DataFrame(recipes)
+
+# Streamlit app
+st.title("Recipe Suggestion System")
+
+# User inputs
+available_ingredients = st.text_input("Enter available ingredients (comma-separated):")
+dietary_restrictions = st.multiselect("Select dietary restrictions:", ["vegan", "vegetarian", "gluten-free", "dairy-free", "nut-free"])
+
+if st.button("Suggest Recipes"):
+    if available_ingredients:
+        available_ingredients_list = [ingredient.strip().lower() for ingredient in available_ingredients.split(",")]
+        
+        # Filter recipes based on available ingredients and dietary restrictions
+        suggested_recipes = []
+        
+        for index, row in recipes_df.iterrows():
+            ingredients = row['ingredients']
+            restrictions = row['dietary_restrictions']
+            
+            # Check if all ingredients are available
+            if all(item in available_ingredients_list for item in ingredients):
+                # Check if dietary restrictions are satisfied
+                if all(restriction in restrictions for restriction in dietary_restrictions):
+                    suggested_recipes.append(row['name'])
+        
+        if suggested_recipes:
+            st.success("Suggested Recipes:")
+            for recipe in suggested_recipes:
+                st.write(f"- {recipe}")
+        else:
+            st.warning("No recipes found based on your criteria.")
+    else:
+        st.warning("Please enter at least one ingredient.")
